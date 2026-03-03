@@ -3,9 +3,13 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 
+const rawBackendUrl = (import.meta.env.VITE_BACKEND_URL || "").trim();
+const shouldUseFallback =
+  !rawBackendUrl || /localhost|127\.0\.0\.1/i.test(rawBackendUrl);
 const backendUrl = (
-  import.meta.env.VITE_BACKEND_URL ||
-  "https://hotel-booking-backend-vsqu.onrender.com"
+  shouldUseFallback
+    ? "https://hotel-booking-backend-vsqu.onrender.com"
+    : rawBackendUrl
 ).replace(/\/$/, "");
 
 axios.defaults.withCredentials = true;
