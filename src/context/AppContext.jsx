@@ -4,13 +4,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 
 const rawBackendUrl = (import.meta.env.VITE_BACKEND_URL || "").trim();
-const shouldUseFallback =
-  !rawBackendUrl || /localhost|127\.0\.0\.1/i.test(rawBackendUrl);
-const backendUrl = (
-  shouldUseFallback
-    ? "https://hotel-booking-backend-vsqu.onrender.com"
-    : rawBackendUrl
-).replace(/\/$/, "");
+const backendUrl = (rawBackendUrl || "https://hotel-booking-backend-vsqu.onrender.com").replace(/\/$/, "");
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = backendUrl;
@@ -106,3 +100,5 @@ export default AppContextProvider;
 
     return `${backendUrl}/images/${imagePath}`;
   };
+
+
