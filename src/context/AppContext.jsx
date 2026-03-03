@@ -81,9 +81,28 @@ const AppContextProvider = ({ children }) => {
     fetchRoomsData();
   }, []);
 
-  const value = { navigate, user, setUser, owner, setOwner, hotelData, roomData, axios, search, setSearch };
+  const value = { navigate, user, setUser, owner, setOwner, hotelData, roomData, axios, search, setSearch, getImageUrl };
   return <AppContext.Provider value={value} > {children}   </AppContext.Provider>;
 
 };
 
 export default AppContextProvider;
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return "";
+    if (/^https:\/\//i.test(imagePath)) return imagePath;
+
+    if (/^http:\/\//i.test(imagePath)) {
+      try {
+        const parsed = new URL(imagePath);
+        if (/localhost|127\.0\.0\.1/i.test(parsed.hostname)) {
+          const filename = parsed.pathname.split("/").pop();
+          return `${backendUrl}/images/${filename}`;
+        }
+        return imagePath.replace(/^http:\/\//i, "https://");
+      } catch {
+        return `${backendUrl}/images/${imagePath}`;
+      }
+    }
+
+    return `${backendUrl}/images/${imagePath}`;
+  };

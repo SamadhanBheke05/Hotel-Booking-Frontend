@@ -19,7 +19,7 @@ const getStatusIcon = (status) =>
   ({ confirmed: CheckCircle, completed: CheckCircle, pending: Clock, cancelled: XCircle }[status] || Clock);
 
 const MyBookings = () => {
-  const { axios } = useContext(AppContext);
+  const { axios, getImageUrl } = useContext(AppContext);
   const [activeTab, setActiveTab] = useState("single");
   const [bookingData, setBookingData] = useState([]);
   const [groupBookings, setGroupBookings] = useState([]);
@@ -143,12 +143,11 @@ const MyBookings = () => {
                 const isCompleted = booking.status !== "cancelled" && new Date() > new Date(booking.checkOut);
                 const displayStatus = isCompleted ? "completed" : booking.status;
                 const StatusIcon = getStatusIcon(displayStatus);
-                const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://hotel-booking-backend-vsqu.onrender.com";
                 return (
                   <div key={booking._id} className="p-6 hover:bg-gray-50 transition-colors">
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
                       <div className="md:col-span-4 flex gap-4">
-                        <img src={`${backendUrl}/images/${booking.room.images[0]}`}
+                        <img src={getImageUrl(booking.room.images[0])}
                           alt={booking.room.roomType}
                           className="w-24 h-20 rounded-lg object-cover" />
                         <div>

@@ -6,7 +6,7 @@ import { ToggleLeft, ToggleRight, Users, Loader2 } from "lucide-react";
 
 const EditHotel = () => {
     const { hotelId } = useParams();
-    const { axios, navigate } = useContext(AppContext);
+    const { axios, navigate, getImageUrl } = useContext(AppContext);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [preview, setPreview] = useState(null);
@@ -106,8 +106,6 @@ const EditHotel = () => {
         );
     }
 
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://hotel-booking-backend-vsqu.onrender.com";
-
     return (
         <div className="py-10 flex flex-col justify-between bg-white">
             <form onSubmit={handleSubmit} className="md:p-10 p-4 space-y-5 max-w-lg">
@@ -118,7 +116,7 @@ const EditHotel = () => {
                     <p className="text-base font-medium mb-2">Hotel Image</p>
                     <div className="mb-3 flex justify-center">
                         <img
-                            src={preview || `${backendUrl}/images/${data.image}`}
+                            src={preview || getImageUrl(data.image)}
                             alt="hotel"
                             className="w-24 h-24 object-cover rounded shadow"
                         />

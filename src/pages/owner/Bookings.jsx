@@ -5,8 +5,7 @@ import { AppContext } from '../../context/AppContext.jsx';
 
 const Bookings = () => {
 
-  const { axios } = useContext(AppContext);
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://hotel-booking-backend-vsqu.onrender.com";
+  const { axios, getImageUrl } = useContext(AppContext);
 
   const [bookingData, setBookingData] = useState([]);
 
@@ -123,7 +122,7 @@ const Bookings = () => {
                     <div className='col-span-1 md:col-span-4'>
                       <div className='flex gap-4'>
                         {booking.room ? (
-                          <img src={`${backendUrl}/images/${booking.room.images[0]}`} alt={booking.room.roomType}
+                          <img src={getImageUrl(booking.room.images[0])} alt={booking.room.roomType}
                             className='w-20 h-16 md:w-24 md:h-20 rounded-lg object-cover flex-shrink:0' />
                         ) : (
                           <div className='w-20 h-16 md:w-24 md:h-20 rounded-lg bg-gray-200 flex items-center justify-center text-gray-400 text-xs flex-shrink-0'>

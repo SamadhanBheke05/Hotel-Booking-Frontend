@@ -3,8 +3,7 @@ import { MapPin, Star, Wifi, Car, Utensils, Waves } from 'lucide-react';
 import { AppContext } from '../context/AppContext';
 
 const HotelCard = ({ hotel }) => {
-    const { navigate } = useContext(AppContext);
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://hotel-booking-backend-vsqu.onrender.com";
+    const { navigate, getImageUrl } = useContext(AppContext);
     const hotelAmenities = Array.isArray(hotel.amenities)
         ? hotel.amenities
         : typeof hotel.amenities === "string"
@@ -32,7 +31,7 @@ const HotelCard = ({ hotel }) => {
             {/* Image Section */}
             <div className="md:w-72 md:min-w-[18rem] relative overflow-hidden">
                 <img
-                    src={hotel.image.startsWith('http') ? hotel.image : `${backendUrl}/images/${hotel.image}`}
+                    src={getImageUrl(hotel.image)}
                     alt={hotel.hotelName}
                     className="w-full h-56 md:h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />

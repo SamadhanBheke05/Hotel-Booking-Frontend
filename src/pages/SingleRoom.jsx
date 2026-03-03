@@ -6,10 +6,9 @@ import { MapPin, Star, Calendar, Users, CheckCircle, XCircle, Phone, User, Wifi,
 import ReviewSection from '../components/ReviewSection';
 
 const SingleRoom = () => {
-  const { roomData, axios, navigate } = useContext(AppContext)
+  const { roomData, axios, navigate, getImageUrl } = useContext(AppContext)
   const { id } = useParams();
   const room = roomData.find((r) => r._id === id);
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://hotel-booking-backend-vsqu.onrender.com";
 
   const [selectedImage, setSelectedImage] = useState(0);
 
@@ -187,7 +186,7 @@ const SingleRoom = () => {
             <div className='bg-white rounded-3xl shadow-sm border border-gray-100 p-4 md:p-6 overflow-hidden'>
               <div className='mb-4 relative group'>
                 <img
-                  src={room.images[selectedImage].startsWith('http') ? room.images[selectedImage] : `${backendUrl}/images/${room.images[selectedImage]}`}
+                  src={getImageUrl(room.images[selectedImage])}
                   alt="Room Main"
                   className='w-full h-[400px] object-cover rounded-2xl transition-transform duration-500 group-hover:scale-[1.01]'
                 />
@@ -199,7 +198,7 @@ const SingleRoom = () => {
                 {room.images.map((image, index) => (
                   <img
                     key={index}
-                    src={image.startsWith('http') ? image : `${backendUrl}/images/${image}`}
+                    src={getImageUrl(image)}
                     alt={`Thumbnail ${index + 1}`}
                     className={`h-20 w-28 object-cover rounded-xl cursor-pointer transition-all duration-200 border-2 
                                             ${selectedImage === index ? "border-primary opacity-100 scale-95" : "border-transparent opacity-70 hover:opacity-100"}`}

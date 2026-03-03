@@ -4,9 +4,7 @@ import { MapIcon, Star } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const AllRooms = () => {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://hotel-booking-backend-vsqu.onrender.com";
-
-  const { navigate, axios } = useContext(AppContext);
+  const { navigate, axios, getImageUrl } = useContext(AppContext);
   const [roomData, setRoomData] = useState([]);
 
   const fetchOWnerRooms = useCallback(async () => {
@@ -98,7 +96,7 @@ const AllRooms = () => {
                       <div className='flex items-center gap-4'>
                         <div className='relative flex-shrink-0 group'>
                           <img
-                            src={`${backendUrl}/images/${room.images[0]}`}
+                            src={getImageUrl(room.images[0])}
                             alt={room.roomType}
                             className='w-20 h-16 rounded-lg object-cover shadow-sm transition-transform duration-300 group-hover:scale-105'
                           />

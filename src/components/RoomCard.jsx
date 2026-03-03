@@ -3,13 +3,12 @@ import { AppContext } from '../context/AppContext'
 import { Star, Users, ArrowUpRight } from 'lucide-react'
 
 const RoomCard = ({ room }) => {
-  const { navigate } = useContext(AppContext);
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://hotel-booking-backend-vsqu.onrender.com";
+  const { navigate, getImageUrl } = useContext(AppContext);
   return (
     <div className="group bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
       <div className="relative h-60 overflow-hidden">
         <img
-          src={`${backendUrl}/images/${room.images[0]}`}
+          src={getImageUrl(room.images[0])}
           alt={room.roomType}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />

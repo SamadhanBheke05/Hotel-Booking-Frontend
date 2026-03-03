@@ -4,7 +4,7 @@ import { MapPin, Star, Users, Edit2, Trash2 } from 'lucide-react';
 import toast from "react-hot-toast"
 
 const AllHotels = () => {
-  const { navigate, axios } = useContext(AppContext);
+  const { navigate, axios, getImageUrl } = useContext(AppContext);
   const [hotelData, setHotelData] = useState([]);
 
   const fetchOwnerHotels = useCallback(async () => {
@@ -38,8 +38,6 @@ const AllHotels = () => {
       toast.error(error.message);
     }
   };
-
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://hotel-booking-backend-vsqu.onrender.com";
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6'>
@@ -81,7 +79,7 @@ const AllHotels = () => {
                     <td className='px-6 py-5'>
                       <div className='flex items-center gap-4'>
                         <img
-                          src={`${backendUrl}/images/${hotel.image}`}
+                          src={getImageUrl(hotel.image)}
                           alt={hotel.hotelName}
                           className='w-20 h-16 rounded-lg object-cover shadow-sm'
                         />

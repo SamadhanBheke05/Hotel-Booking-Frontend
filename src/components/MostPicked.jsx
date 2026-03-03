@@ -4,10 +4,7 @@ import { MapPin, ArrowRight } from 'lucide-react'
 
 const MostPicked = () => {
 
-  const { hotelData, navigate } = useContext(AppContext)
-
-  const backendUrl =
-    import.meta.env.VITE_BACKEND_URL || "https://hotel-booking-backend-vsqu.onrender.com"
+  const { hotelData, navigate, getImageUrl } = useContext(AppContext)
 
   return (
     <section className="py-20 bg-white">
@@ -33,7 +30,7 @@ const MostPicked = () => {
               {/* Image */}
               <div className="h-72 w-full overflow-hidden">
                 <img
-                  src={`${backendUrl}/images/${item.image}`}
+                  src={getImageUrl(item.image)}
                   alt={item.hotelName}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
