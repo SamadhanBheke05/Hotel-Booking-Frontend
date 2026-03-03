@@ -6,7 +6,7 @@ import { MapPin, Star, Calendar, Users, CheckCircle, XCircle, Phone, User, Wifi,
 import ReviewSection from '../components/ReviewSection';
 
 const SingleRoom = () => {
-  const { roomData, axios, navigate, getImageUrl } = useContext(AppContext)
+  const { roomData, axios, navigate, getImageUrl, user } = useContext(AppContext)
   const { id } = useParams();
   const room = roomData.find((r) => r._id === id);
 
@@ -89,6 +89,11 @@ const SingleRoom = () => {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    if (!user) {
+      toast.error("Please login to continue booking");
+      navigate("/login");
+      return;
+    }
     try {
       if (!isAvailable) {
         return checkRoomAvailability();
@@ -113,6 +118,11 @@ const SingleRoom = () => {
       }
 
     } catch (error) {
+      if (error.response?.status === 401) {
+        toast.error("Session expired. Please login again.");
+        navigate("/login");
+        return;
+      }
       toast.error(error.message);
     }
   };

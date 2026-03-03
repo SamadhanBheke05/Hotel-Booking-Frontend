@@ -39,10 +39,12 @@ const Login = () => {
         toast.success(data.message);
 
         if (data.user.role === "owner") {
-          setOwner(true);
+          setOwner(data.user);
+          setUser(data.user);
           navigate("/owner");
         } else {
-          setUser(true);
+          setUser(data.user);
+          setOwner(null);
           navigate("/");
         }
       } else {

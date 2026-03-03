@@ -4,7 +4,15 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 
 const rawBackendUrl = (import.meta.env.VITE_BACKEND_URL || "").trim();
-const backendUrl = (rawBackendUrl || "https://hotel-booking-backend-vsqu.onrender.com").replace(/\/$/, "");
+const isHttpsPage = typeof window !== "undefined" && window.location.protocol === "https:";
+const localhostHttpRegex = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i;
+const defaultBackendUrl = isHttpsPage
+  ? "https://hotel-booking-backend-vsqu.onrender.com"
+  : "http://localhost:4000";
+const shouldIgnoreEnvLocalhost = isHttpsPage && localhostHttpRegex.test(rawBackendUrl);
+const backendUrl = (
+  rawBackendUrl && !shouldIgnoreEnvLocalhost ? rawBackendUrl : defaultBackendUrl
+).replace(/\/$/, "");
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = backendUrl;
@@ -36,6 +44,10 @@ const AppContextProvider = ({ children }) => {
         }
       }
     } catch (error) {
+      if (error.response?.status === 401) {
+        setUser(null);
+        setOwner(null);
+      }
       // 401 is expected when user is not logged in, so we don't log it
       if (error.response?.status !== 401) {
         console.log("error", error);
