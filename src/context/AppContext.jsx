@@ -2,8 +2,14 @@ import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+
+const backendUrl = (
+  import.meta.env.VITE_BACKEND_URL ||
+  "https://hotel-booking-backend-vsqu.onrender.com"
+).replace(/\/$/, "");
+
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
+axios.defaults.baseURL = backendUrl;
 
 export const AppContext = createContext();
 
