@@ -6,7 +6,7 @@ import { AppContext } from '../../context/AppContext.jsx';
 const Bookings = () => {
 
   const { axios } = useContext(AppContext);
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://hotel-booking-backend-vsqu.onrender.com";
 
   const [bookingData, setBookingData] = useState([]);
 

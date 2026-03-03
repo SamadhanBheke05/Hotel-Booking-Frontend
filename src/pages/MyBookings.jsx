@@ -143,7 +143,7 @@ const MyBookings = () => {
                 const isCompleted = booking.status !== "cancelled" && new Date() > new Date(booking.checkOut);
                 const displayStatus = isCompleted ? "completed" : booking.status;
                 const StatusIcon = getStatusIcon(displayStatus);
-                const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+                const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://hotel-booking-backend-vsqu.onrender.com";
                 return (
                   <div key={booking._id} className="p-6 hover:bg-gray-50 transition-colors">
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">

@@ -7,7 +7,7 @@ const MostPicked = () => {
   const { hotelData, navigate } = useContext(AppContext)
 
   const backendUrl =
-    import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"
+    import.meta.env.VITE_BACKEND_URL || "https://hotel-booking-backend-vsqu.onrender.com"
 
   return (
     <section className="py-20 bg-white">

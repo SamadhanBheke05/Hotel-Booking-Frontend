@@ -9,7 +9,7 @@ const SingleRoom = () => {
   const { roomData, axios, navigate } = useContext(AppContext)
   const { id } = useParams();
   const room = roomData.find((r) => r._id === id);
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://hotel-booking-backend-vsqu.onrender.com";
 
   const [selectedImage, setSelectedImage] = useState(0);
 

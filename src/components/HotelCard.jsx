@@ -4,7 +4,7 @@ import { AppContext } from '../context/AppContext';
 
 const HotelCard = ({ hotel }) => {
     const { navigate } = useContext(AppContext);
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://hotel-booking-backend-vsqu.onrender.com";
     const hotelAmenities = Array.isArray(hotel.amenities)
         ? hotel.amenities
         : typeof hotel.amenities === "string"

@@ -161,7 +161,7 @@ const HotelRooms = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {filteredRooms.map((room) => {
                     const isSelected = selectedRooms.includes(room._id);
-                    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+                    const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://hotel-booking-backend-vsqu.onrender.com";
                     return (
                       <div
                         key={room._id}

@@ -4,7 +4,7 @@ import { Star, Users, ArrowUpRight } from 'lucide-react'
 
 const RoomCard = ({ room }) => {
   const { navigate } = useContext(AppContext);
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://hotel-booking-backend-vsqu.onrender.com";
   return (
     <div className="group bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
       <div className="relative h-60 overflow-hidden">

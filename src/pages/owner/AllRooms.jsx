@@ -4,7 +4,7 @@ import { MapIcon, Star } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const AllRooms = () => {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://hotel-booking-backend-vsqu.onrender.com";
 
   const { navigate, axios } = useContext(AppContext);
   const [roomData, setRoomData] = useState([]);

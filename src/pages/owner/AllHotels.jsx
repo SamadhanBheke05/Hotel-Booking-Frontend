@@ -39,7 +39,7 @@ const AllHotels = () => {
     }
   };
 
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://hotel-booking-backend-vsqu.onrender.com";
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6'>
