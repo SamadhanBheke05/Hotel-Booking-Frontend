@@ -3,16 +3,26 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 
-const rawBackendUrl = (import.meta.env.VITE_BACKEND_URL || "").trim();
+const rawBackendUrl = (import.meta.env.VITE_BACKEND_URL || "")
+  .trim()
+  .replace(/^['"]|['"]$/g, "");
 const isHttpsPage = typeof window !== "undefined" && window.location.protocol === "https:";
 const localhostHttpRegex = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i;
 const defaultBackendUrl = isHttpsPage
   ? "https://hotel-booking-backend-vsqu.onrender.com"
   : "http://localhost:4000";
 const shouldIgnoreEnvLocalhost = isHttpsPage && localhostHttpRegex.test(rawBackendUrl);
-const backendUrl = (
-  rawBackendUrl && !shouldIgnoreEnvLocalhost ? rawBackendUrl : defaultBackendUrl
-).replace(/\/$/, "");
+const candidateBackendUrl =
+  rawBackendUrl && !shouldIgnoreEnvLocalhost ? rawBackendUrl : defaultBackendUrl;
+
+const backendUrl = (() => {
+  try {
+    const parsed = new URL(candidateBackendUrl);
+    return parsed.toString().replace(/\/$/, "");
+  } catch {
+    return defaultBackendUrl.replace(/\/$/, "");
+  }
+})();
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = backendUrl;

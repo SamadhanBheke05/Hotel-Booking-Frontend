@@ -39,7 +39,19 @@ const Signup = () => {
     }
 
     try {
-      const { data } = await axios.post("/api/user/signup", formData);
+      let response;
+      try {
+        response = await axios.post("/api/user/signup", formData);
+      } catch (error) {
+        // Fallback for deployments using pluralized route prefix.
+        if (error.response?.status === 404) {
+          response = await axios.post("/api/users/signup", formData);
+        } else {
+          throw error;
+        }
+      }
+
+      const { data } = response;
 
       if (data.success) {
         toast.success("OTP sent to your email 📩");
