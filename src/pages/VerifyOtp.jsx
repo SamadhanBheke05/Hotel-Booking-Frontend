@@ -1,12 +1,14 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AppContext } from "../context/AppContext";
 import { toast } from "react-hot-toast";
+import { useLocation } from "react-router-dom";
 
 const VerifyOtp = () => {
     const { axios, navigate } = useContext(AppContext);
     const [otp, setOtp] = useState("");
+    const location = useLocation();
 
-    const email = localStorage.getItem("signupEmail");
+    const email = location.state?.email || localStorage.getItem("signupEmail");
 
     useEffect(() => {
         if (!email) {
@@ -32,8 +34,8 @@ const VerifyOtp = () => {
             } else {
                 toast.error(data.message);
             }
-        } catch {
-            toast.error("Invalid or expired OTP");
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Invalid or expired OTP");
         }
     };
 

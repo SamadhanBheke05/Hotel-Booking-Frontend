@@ -54,13 +54,19 @@ const Signup = () => {
       const { data } = response;
 
       if (data.success) {
-        toast.success("OTP sent to your email 📩");
+        if (data.otpSent === false) {
+          toast.error(
+            data.message || "OTP email failed, but you can still verify OTP."
+          );
+        } else {
+          toast.success("OTP sent to your email");
+        }
 
         // store email for OTP verification
         localStorage.setItem("signupEmail", formData.email);
 
         // go to OTP page
-        navigate("/verify-otp");
+        navigate("/verify-otp", { state: { email: formData.email } });
       } else {
         toast.error(data.message);
       }
