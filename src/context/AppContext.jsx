@@ -10,7 +10,7 @@ const isHttpsPage = typeof window !== "undefined" && window.location.protocol ==
 const localhostHttpRegex = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i;
 const defaultBackendUrl = isHttpsPage
   ? "https://hotel-booking-backend-vsqu.onrender.com"
-  : "http://localhost:4000";
+  : "http://localhost:5000";
 const shouldIgnoreEnvLocalhost = isHttpsPage && localhostHttpRegex.test(rawBackendUrl);
 const candidateBackendUrl =
   rawBackendUrl && !shouldIgnoreEnvLocalhost ? rawBackendUrl : defaultBackendUrl;
@@ -43,6 +43,26 @@ const AppContextProvider = ({ children }) => {
     checkOut: '',
     guests: 1
   });
+
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return "";
+    if (/^https:\/\//i.test(imagePath)) return imagePath;
+
+    if (/^http:\/\//i.test(imagePath)) {
+      try {
+        const parsed = new URL(imagePath);
+        if (/localhost|127\.0\.0\.1/i.test(parsed.hostname)) {
+          const filename = parsed.pathname.split("/").pop();
+          return `${backendUrl}/images/${filename}`;
+        }
+        return imagePath.replace(/^http:\/\//i, "https://");
+      } catch {
+        return `${backendUrl}/images/${imagePath}`;
+      }
+    }
+
+    return `${backendUrl}/images/${imagePath}`;
+  };
 
   const checkUserLoggedInOrNot = async () => {
     try {
@@ -103,24 +123,4 @@ const AppContextProvider = ({ children }) => {
 };
 
 export default AppContextProvider;
-  const getImageUrl = (imagePath) => {
-    if (!imagePath) return "";
-    if (/^https:\/\//i.test(imagePath)) return imagePath;
-
-    if (/^http:\/\//i.test(imagePath)) {
-      try {
-        const parsed = new URL(imagePath);
-        if (/localhost|127\.0\.0\.1/i.test(parsed.hostname)) {
-          const filename = parsed.pathname.split("/").pop();
-          return `${backendUrl}/images/${filename}`;
-        }
-        return imagePath.replace(/^http:\/\//i, "https://");
-      } catch {
-        return `${backendUrl}/images/${imagePath}`;
-      }
-    }
-
-    return `${backendUrl}/images/${imagePath}`;
-  };
-
 
