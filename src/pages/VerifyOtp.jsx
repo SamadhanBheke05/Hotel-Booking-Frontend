@@ -6,8 +6,6 @@ import { useLocation } from "react-router-dom";
 const VerifyOtp = () => {
     const { axios, navigate } = useContext(AppContext);
     const [otp, setOtp] = useState("");
-    const [resending, setResending] = useState(false);
-    const [cooldown, setCooldown] = useState(0);
     const location = useLocation();
 
     const email = location.state?.email || localStorage.getItem("signupEmail");
@@ -15,23 +13,8 @@ const VerifyOtp = () => {
     useEffect(() => {
         if (!email) {
             navigate("/signup");
-            return;
-        }
-
-        const devOtp = localStorage.getItem("signupDevOtp");
-        if (devOtp) {
-            setOtp(devOtp);
-            toast.success(`Dev OTP loaded: ${devOtp}`);
         }
     }, [email, navigate]);
-
-    useEffect(() => {
-        if (cooldown <= 0) return;
-        const timer = setInterval(() => {
-            setCooldown((prev) => (prev > 0 ? prev - 1 : 0));
-        }, 1000);
-        return () => clearInterval(timer);
-    }, [cooldown]);
 
     const submitOtpHandler = async (e) => {
         e.preventDefault();
@@ -45,36 +28,12 @@ const VerifyOtp = () => {
             if (data.success) {
                 toast.success("Email verified successfully");
                 localStorage.removeItem("signupEmail");
-                localStorage.removeItem("signupDevOtp");
                 navigate("/login");
             } else {
                 toast.error(data.message);
             }
         } catch (error) {
             toast.error(error.response?.data?.message || "Invalid or expired OTP");
-        }
-    };
-
-    const resendOtpHandler = async () => {
-        if (!email || cooldown > 0 || resending) return;
-        try {
-            setResending(true);
-            const { data } = await axios.post("/api/user/resend-otp", { email });
-            if (data.success) {
-                toast.success(data.message || "OTP resent");
-                if (data.devOtp) {
-                    localStorage.setItem("signupDevOtp", data.devOtp);
-                    setOtp(data.devOtp);
-                    toast.success(`Dev OTP loaded: ${data.devOtp}`);
-                }
-                setCooldown(30);
-            } else {
-                toast.error(data.message || "Unable to resend OTP");
-            }
-        } catch (error) {
-            toast.error(error.response?.data?.message || "Unable to resend OTP");
-        } finally {
-            setResending(false);
         }
     };
 
@@ -105,19 +64,6 @@ const VerifyOtp = () => {
                         Verify OTP
                     </button>
                 </form>
-
-                <button
-                    type="button"
-                    onClick={resendOtpHandler}
-                    disabled={resending || cooldown > 0}
-                    className="w-full mt-3 py-2 text-sm rounded-lg border border-indigo-200 text-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                    {resending
-                        ? "Resending..."
-                        : cooldown > 0
-                            ? `Resend OTP in ${cooldown}s`
-                            : "Resend OTP"}
-                </button>
             </div>
         </div>
     );
