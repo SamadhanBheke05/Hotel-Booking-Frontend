@@ -64,6 +64,11 @@ const Signup = () => {
 
         // store email for OTP verification
         localStorage.setItem("signupEmail", formData.email);
+        if (data.devOtp) {
+          localStorage.setItem("signupDevOtp", data.devOtp);
+        } else {
+          localStorage.removeItem("signupDevOtp");
+        }
 
         // go to OTP page
         navigate("/verify-otp", { state: { email: formData.email } });
