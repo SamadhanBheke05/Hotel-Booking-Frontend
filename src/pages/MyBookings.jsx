@@ -8,11 +8,11 @@ import {
 import { AppContext } from "../context/AppContext.jsx";
 
 const getStatusColor = (status) => ({
-  confirmed: "bg-green-500", pending: "bg-yellow-500", cancelled: "bg-red-500"
+  confirmed: "bg-green-500", completed: "bg-green-500", pending: "bg-yellow-500", cancelled: "bg-red-500"
 }[status] || "bg-gray-500");
 
 const getStatusTextColor = (status) => ({
-  confirmed: "text-green-500", pending: "text-yellow-500", cancelled: "text-red-500"
+  confirmed: "text-green-500", completed: "text-green-500", pending: "text-yellow-500", cancelled: "text-red-500"
 }[status] || "text-gray-500");
 
 const getStatusIcon = (status) =>
@@ -234,7 +234,9 @@ const MyBookings = () => {
                 </div>
                 <div className="divide-y divide-gray-100">
                   {groupBookings.map((booking) => {
-                    const StatusIcon = getStatusIcon(booking.status);
+                    const isCompleted = booking.status !== "cancelled" && new Date() > new Date(booking.checkOut);
+                    const displayStatus = isCompleted ? "completed" : booking.status;
+                    const StatusIcon = getStatusIcon(displayStatus);
                     return (
                       <div key={booking._id} className="p-5 hover:bg-gray-50 transition-colors">
                         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
@@ -263,10 +265,10 @@ const MyBookings = () => {
                             <span className="font-bold text-green-600 text-sm">₹{(booking.totalPrice || 0).toLocaleString()}</span>
                           </div>
                           <div className="md:col-span-1 space-y-1">
-                            <div className={`flex items-center gap-1 text-xs font-medium capitalize ${getStatusTextColor(booking.status)}`}>
-                              <StatusIcon size={13} /> {booking.status}
+                            <div className={`flex items-center gap-1 text-xs font-medium capitalize ${getStatusTextColor(displayStatus)}`}>
+                              <StatusIcon size={13} /> {displayStatus}
                             </div>
-                            {!booking.isPaid && booking.status !== "cancelled" && (
+                            {!booking.isPaid && displayStatus !== "completed" && booking.status !== "cancelled" && (
                               <button
                                 onClick={() => handlePayNow(booking)}
                                 className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-semibold hover:underline"

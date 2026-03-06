@@ -8,12 +8,13 @@ import {
 
 const STATUS_COLORS = {
     confirmed: "bg-green-100 text-green-700",
+    completed: "bg-green-100 text-green-700",
     pending: "bg-yellow-100 text-yellow-700",
     cancelled: "bg-red-100 text-red-700",
 };
 
 const StatusIcon = ({ status }) => {
-    if (status === "confirmed") return <CheckCircle size={14} />;
+    if (status === "confirmed" || status === "completed") return <CheckCircle size={14} />;
     if (status === "cancelled") return <XCircle size={14} />;
     return <Clock size={14} />;
 };
@@ -126,7 +127,10 @@ const GroupBookings = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
-                                    {bookings.map((booking, index) => (
+                                    {bookings.map((booking, index) => {
+                                        const isCompleted = booking.status !== "cancelled" && new Date() > new Date(booking.checkOut);
+                                        const displayStatus = isCompleted ? "completed" : booking.status;
+                                        return (
                                         <React.Fragment key={booking._id}>
                                             <tr className={`hover:bg-blue-50 transition-colors ${index % 2 === 0 ? "bg-white" : "bg-gray-50"}`}>
 
@@ -176,9 +180,9 @@ const GroupBookings = () => {
 
                                                 {/* Status */}
                                                 <td className="px-4 py-4">
-                                                    <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[booking.status] || "bg-gray-100 text-gray-600"}`}>
-                                                        <StatusIcon status={booking.status} />
-                                                        {booking.status}
+                                                    <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[displayStatus] || "bg-gray-100 text-gray-600"}`}>
+                                                        <StatusIcon status={displayStatus} />
+                                                        {displayStatus}
                                                     </span>
                                                 </td>
 
@@ -233,7 +237,7 @@ const GroupBookings = () => {
                                                 </tr>
                                             )}
                                         </React.Fragment>
-                                    ))}
+                                    )})}
                                 </tbody>
                             </table>
                         </div>
