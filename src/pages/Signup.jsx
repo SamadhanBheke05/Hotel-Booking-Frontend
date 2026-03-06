@@ -16,6 +16,7 @@ const Signup = () => {
   });
 
   const [passwordError, setPasswordError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // 🔒 Password validation
   const validatePassword = (password) => {
@@ -30,6 +31,7 @@ const Signup = () => {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
 
     if (!validatePassword(formData.password)) {
       setPasswordError(
@@ -39,6 +41,7 @@ const Signup = () => {
     }
 
     try {
+      setIsSubmitting(true);
       let response;
       try {
         response = await axios.post("/api/user/signup", formData);
@@ -72,6 +75,8 @@ const Signup = () => {
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Signup failed");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -167,9 +172,10 @@ const Signup = () => {
 
           <button
             type="submit"
-            className="w-full py-3 text-white rounded-lg bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+            disabled={isSubmitting}
+            className="w-full py-3 text-white rounded-lg bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            Sign Up
+            {isSubmitting ? "Please wait..." : "Sign Up"}
           </button>
 
           <p className="text-center text-sm text-gray-600">
