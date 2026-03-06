@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { AppContext } from '../context/AppContext';
 import { toast } from "react-hot-toast";
-import { MapPin, Star, Calendar, Users, CheckCircle, XCircle, Phone, User, Wifi, Car, Utensils, Coffee, Tv, Bath, Eye, Building, TreePine, Mountain } from "lucide-react";
+import { MapPin, Star, Calendar, Users, CheckCircle, XCircle, User, Wifi, Car, Utensils, Coffee, Tv, Bath, Eye, Building, TreePine, Mountain } from "lucide-react";
 import ReviewSection from '../components/ReviewSection';
 
 const SingleRoom = () => {
@@ -330,13 +330,6 @@ const SingleRoom = () => {
             <div className="mt-6 bg-white rounded-3xl shadow-sm border border-gray-100 p-6 flex items-center gap-4">
               <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-primary font-bold text-xl">
                 {room.hotel.owner?.name?.[0] || "H"}
-              </div>
-              <div>
-                <h4 className="font-bold text-heading">{room.hotel.owner?.name || "Hotel Owner"}</h4>
-                <div className="flex items-center gap-1.5 text-xs text-gray-500 mt-0.5">
-                  <Phone size={12} />
-                  <span>+91 98765 43217</span>
-                </div>
               </div>
             </div>
           </div>
