@@ -9,7 +9,7 @@ const rawBackendUrl = (import.meta.env.VITE_BACKEND_URL || "")
 const isHttpsPage = typeof window !== "undefined" && window.location.protocol === "https:";
 const localhostHttpRegex = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i;
 const defaultBackendUrl = isHttpsPage
-  ? "https://hotel-booking-backend-vsqu.onrender.com"
+  ? "https://hotel-booking-back.onrender.com"
   : "http://localhost:5000";
 const shouldIgnoreEnvLocalhost = isHttpsPage && localhostHttpRegex.test(rawBackendUrl);
 const candidateBackendUrl =
