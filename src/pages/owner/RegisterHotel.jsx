@@ -51,7 +51,7 @@ const RegisterHotel = () => {
         toast.error(res.message);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response?.data?.message || error.message);
     }
   };
 
@@ -84,7 +84,7 @@ const RegisterHotel = () => {
         <div className="flex flex-col gap-1 max-w-md">
           <label className="text-base font-medium">Hotel Address</label>
           <textarea name="hotelAddress" value={data.hotelAddress} onChange={handleChange}
-            rows={3} placeholder="Type here"
+            rows={3} placeholder="Type here" required
             className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 resize-none" />
         </div>
 
@@ -108,7 +108,7 @@ const RegisterHotel = () => {
         <div className="flex flex-col gap-1 max-w-md">
           <label className="text-base font-medium">Amenities (comma separated)</label>
           <textarea name="amenities" value={data.amenities} onChange={handleChange}
-            rows={3} placeholder="WiFi, Pool, Spa..."
+            rows={3} placeholder="WiFi, Pool, Spa..." required
             className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 resize-none" />
         </div>
 

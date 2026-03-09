@@ -19,14 +19,14 @@ const AddRoom = () => {
 
   const fetchOwnerHotels = useCallback(async () => {
     try {
-      const { data } = await axios.get("/api/hotel/get-all");
+      const { data } = await axios.get("/api/hotel/get");
       if (data.success) {
         setHotelData(data.hotels);
       } else {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response?.data?.message || error.message);
     }
   }, [axios]);
 
@@ -181,6 +181,9 @@ const AddRoom = () => {
               <option key={item._id} value={item._id}>{item.hotelName}</option>
             ))}
           </select>
+          {hotelData.length === 0 && (
+            <p className="text-sm text-red-600 mt-1">No hotels found for your account. Create a hotel first.</p>
+          )}
         </div>
 
         <div className="flex items-center gap-5 flex-wrap">
