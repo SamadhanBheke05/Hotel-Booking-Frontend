@@ -48,53 +48,28 @@ const RegisterHotel = () => {
     }
     if (!file) return toast.error("Hotel image is required");
 
-    const buildFormData = (fileFieldName) => {
-      const formData = new FormData();
-      formData.append("hotelName", hotelName);
-      formData.append("hotelAddress", hotelAddress);
-      formData.append("rating", String(rating));
-      formData.append("price", String(price));
-      formData.append("amenities", amenities);
-      formData.append("groupBookingAllowed", data.groupBookingAllowed);
-      formData.append("maxGroupMembers", data.maxGroupMembers || 0);
-      formData.append("maxGroupRooms", data.maxGroupRooms || 0);
-      formData.append(fileFieldName, file);
-      return formData;
-    };
+    const formData = new FormData();
+    formData.append("hotelName", hotelName);
+    formData.append("hotelAddress", hotelAddress);
+    formData.append("rating", String(rating));
+    formData.append("price", String(price));
+    formData.append("amenities", amenities);
+    formData.append("groupBookingAllowed", data.groupBookingAllowed);
+    formData.append("maxGroupMembers", data.maxGroupMembers || 0);
+    formData.append("maxGroupRooms", data.maxGroupRooms || 0);
+    formData.append("image", file);
 
     try {
-      const primaryPayload = buildFormData("image");
       console.log("REGISTER_HOTEL_PAYLOAD", {
         fileName: file?.name,
         fileType: file?.type,
         fileSize: file?.size,
-        fields: Array.from(primaryPayload.keys()),
+        fields: Array.from(formData.keys()),
       });
 
-      let { data: res } = await axios.post("/api/hotel/register", primaryPayload, {
+      const { data: res } = await axios.post("/api/hotel/register", formData, {
         withCredentials: true,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
       });
-
-      // Compatibility retry for older backend variants that expect "hotelImage"
-      if (!res?.success && res?.message === "All fields are required") {
-        const retryPayload = buildFormData("hotelImage");
-        console.log("REGISTER_HOTEL_RETRY_PAYLOAD", {
-          fileName: file?.name,
-          fileType: file?.type,
-          fileSize: file?.size,
-          fields: Array.from(retryPayload.keys()),
-        });
-        const retry = await axios.post("/api/hotel/register", retryPayload, {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        res = retry.data;
-      }
 
       if (res.success) {
         toast.success(res.message);
@@ -103,31 +78,6 @@ const RegisterHotel = () => {
         toast.error(res.message || "Failed to register hotel");
       }
     } catch (error) {
-      // Retry once with alternate field key when backend validation indicates file mismatch.
-      if (error.response?.status === 400 && error.response?.data?.message === "All fields are required") {
-        try {
-          const retryPayload = buildFormData("hotelImage");
-          console.log("REGISTER_HOTEL_CATCH_RETRY_PAYLOAD", {
-            fileName: file?.name,
-            fileType: file?.type,
-            fileSize: file?.size,
-            fields: Array.from(retryPayload.keys()),
-          });
-          const retry = await axios.post("/api/hotel/register", retryPayload, {
-            withCredentials: true,
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          });
-          if (retry.data?.success) {
-            toast.success(retry.data.message);
-            navigate("/owner");
-            return;
-          }
-        } catch {
-          // Fall through to the original error toast below.
-        }
-      }
       const status = error.response?.status;
       const message = error.response?.data?.message || error.message || "Failed to register hotel";
       console.error("REGISTER_HOTEL_ERROR", {
