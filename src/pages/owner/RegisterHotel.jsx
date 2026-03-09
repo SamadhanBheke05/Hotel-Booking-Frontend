@@ -58,6 +58,8 @@ const RegisterHotel = () => {
     formData.append("maxGroupMembers", data.maxGroupMembers || 0);
     formData.append("maxGroupRooms", data.maxGroupRooms || 0);
     formData.append("image", file);
+    // Backward compatibility for older backend builds that used a different upload field name.
+    formData.append("hotelImage", file);
 
     try {
       const { data: res } = await axios.post("/api/hotel/register", formData);
