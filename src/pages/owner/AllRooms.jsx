@@ -9,7 +9,9 @@ const AllRooms = () => {
 
   const fetchAllRooms = useCallback(async () => {
     try {
-      const { data } = await axios.get("/api/room/get-all");
+      const { data } = await axios.get("/api/room/get-all", {
+        params: { t: Date.now() },
+      });
       if (data.success) {
         setRoomData(data.rooms);
       } else {
