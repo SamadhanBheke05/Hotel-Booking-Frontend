@@ -31,12 +31,29 @@ const RegisterHotel = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const hotelName = data.hotelName.trim();
+    const hotelAddress = data.hotelAddress.trim();
+    const amenities = data.amenities.trim();
+    const rating = Number(data.rating);
+    const price = Number(data.price);
+
+    if (!hotelName) return toast.error("Hotel name is required");
+    if (!hotelAddress) return toast.error("Hotel address is required");
+    if (!amenities) return toast.error("Amenities are required");
+    if (!Number.isFinite(rating) || rating < 0 || rating > 5) {
+      return toast.error("Rating must be between 0 and 5");
+    }
+    if (!Number.isFinite(price) || price < 0) {
+      return toast.error("Price must be a valid non-negative number");
+    }
+    if (!file) return toast.error("Hotel image is required");
+
     const formData = new FormData();
-    formData.append("hotelName", data.hotelName);
-    formData.append("hotelAddress", data.hotelAddress);
-    formData.append("rating", data.rating);
-    formData.append("price", data.price);
-    formData.append("amenities", data.amenities);
+    formData.append("hotelName", hotelName);
+    formData.append("hotelAddress", hotelAddress);
+    formData.append("rating", String(rating));
+    formData.append("price", String(price));
+    formData.append("amenities", amenities);
     formData.append("groupBookingAllowed", data.groupBookingAllowed);
     formData.append("maxGroupMembers", data.maxGroupMembers || 0);
     formData.append("maxGroupRooms", data.maxGroupRooms || 0);
@@ -48,10 +65,19 @@ const RegisterHotel = () => {
         toast.success(res.message);
         navigate("/owner");
       } else {
-        toast.error(res.message);
+        if (res.message === "All fields are required") {
+          toast.error("Backend is running old validation. Restart backend / deploy latest code.");
+        } else {
+          toast.error(res.message);
+        }
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || error.message);
+      const message = error.response?.data?.message || error.message;
+      if (message === "All fields are required") {
+        toast.error("Backend is running old validation. Restart backend / deploy latest code.");
+      } else {
+        toast.error(message);
+      }
     }
   };
 
