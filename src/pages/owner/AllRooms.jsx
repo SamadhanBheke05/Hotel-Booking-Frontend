@@ -7,9 +7,9 @@ const AllRooms = () => {
   const { navigate, axios, getImageUrl } = useContext(AppContext);
   const [roomData, setRoomData] = useState([]);
 
-  const fetchOWnerRooms = useCallback(async () => {
+  const fetchAllRooms = useCallback(async () => {
     try {
-      const { data } = await axios.get("/api/room/get");
+      const { data } = await axios.get("/api/room/get-all");
       if (data.success) {
         setRoomData(data.rooms);
       } else {
@@ -22,19 +22,19 @@ const AllRooms = () => {
   }, [axios]);
 
   useEffect(() => {
-    fetchOWnerRooms();
-  }, [fetchOWnerRooms]);
+    fetchAllRooms();
+  }, [fetchAllRooms]);
 
   const deleteRoom = async (id) => {
     if (!window.confirm("Are you sure you want to delete this room?")) return;
     try {
       const { data } = await axios.delete(`/api/room/delete/${id}`);
-      if (data.success) {
-        toast.success(data.message);
-        fetchOWnerRooms();
-      } else {
-        toast.error(data.message);
-      }
+        if (data.success) {
+          toast.success(data.message);
+          fetchAllRooms();
+        } else {
+          toast.error(data.message);
+        }
     } catch (error) {
       toast.error(error.message);
     }
