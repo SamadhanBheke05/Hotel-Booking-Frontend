@@ -48,19 +48,29 @@ const RegisterHotel = () => {
     }
     if (!file) return toast.error("Hotel image is required");
 
-    const formData = new FormData();
-    formData.append("hotelName", hotelName);
-    formData.append("hotelAddress", hotelAddress);
-    formData.append("rating", String(rating));
-    formData.append("price", String(price));
-    formData.append("amenities", amenities);
-    formData.append("groupBookingAllowed", data.groupBookingAllowed);
-    formData.append("maxGroupMembers", data.maxGroupMembers || 0);
-    formData.append("maxGroupRooms", data.maxGroupRooms || 0);
-    formData.append("image", file);
+    const buildFormData = (fileFieldName) => {
+      const formData = new FormData();
+      formData.append("hotelName", hotelName);
+      formData.append("hotelAddress", hotelAddress);
+      formData.append("rating", String(rating));
+      formData.append("price", String(price));
+      formData.append("amenities", amenities);
+      formData.append("groupBookingAllowed", data.groupBookingAllowed);
+      formData.append("maxGroupMembers", data.maxGroupMembers || 0);
+      formData.append("maxGroupRooms", data.maxGroupRooms || 0);
+      formData.append(fileFieldName, file);
+      return formData;
+    };
 
     try {
-      const { data: res } = await axios.post("/api/hotel/register", formData);
+      let { data: res } = await axios.post("/api/hotel/register", buildFormData("image"));
+
+      // Compatibility retry for older backend variants that expect "hotelImage"
+      if (!res?.success && res?.message === "All fields are required") {
+        const retry = await axios.post("/api/hotel/register", buildFormData("hotelImage"));
+        res = retry.data;
+      }
+
       if (res.success) {
         toast.success(res.message);
         navigate("/owner");
@@ -68,6 +78,19 @@ const RegisterHotel = () => {
         toast.error(res.message || "Failed to register hotel");
       }
     } catch (error) {
+      // Retry once with alternate field key when backend validation indicates file mismatch.
+      if (error.response?.status === 400 && error.response?.data?.message === "All fields are required") {
+        try {
+          const retry = await axios.post("/api/hotel/register", buildFormData("hotelImage"));
+          if (retry.data?.success) {
+            toast.success(retry.data.message);
+            navigate("/owner");
+            return;
+          }
+        } catch {
+          // Fall through to the original error toast below.
+        }
+      }
       const status = error.response?.status;
       const message = error.response?.data?.message || error.message || "Failed to register hotel";
       console.error("REGISTER_HOTEL_ERROR", {
