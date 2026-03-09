@@ -58,6 +58,15 @@ const RegisterHotel = () => {
     formData.append("maxGroupMembers", data.maxGroupMembers || 0);
     formData.append("maxGroupRooms", data.maxGroupRooms || 0);
     formData.append("image", file);
+    // Legacy payload aliases for older backend contracts.
+    formData.append("name", hotelName);
+    formData.append("title", hotelName);
+    formData.append("address", hotelAddress);
+    formData.append("location", hotelAddress);
+    formData.append("hotelLocation", hotelAddress);
+    formData.append("pricePerNight", String(price));
+    formData.append("facilities", amenities);
+    formData.append("hotelImage", file?.name || "");
 
     try {
       console.log("REGISTER_HOTEL_PAYLOAD", {
