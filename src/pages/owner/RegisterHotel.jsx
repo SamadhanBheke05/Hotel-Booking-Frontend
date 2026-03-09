@@ -65,19 +65,16 @@ const RegisterHotel = () => {
         toast.success(res.message);
         navigate("/owner");
       } else {
-        if (res.message === "All fields are required") {
-          toast.error("Backend is running old validation. Restart backend / deploy latest code.");
-        } else {
-          toast.error(res.message);
-        }
+        toast.error(res.message || "Failed to register hotel");
       }
     } catch (error) {
-      const message = error.response?.data?.message || error.message;
-      if (message === "All fields are required") {
-        toast.error("Backend is running old validation. Restart backend / deploy latest code.");
-      } else {
-        toast.error(message);
-      }
+      const status = error.response?.status;
+      const message = error.response?.data?.message || error.message || "Failed to register hotel";
+      console.error("REGISTER_HOTEL_ERROR", {
+        status,
+        data: error.response?.data,
+      });
+      toast.error(status ? `${message} (HTTP ${status})` : message);
     }
   };
 
