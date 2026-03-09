@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { AppContext } from '../../context/AppContext'
-import { MapIcon, Star } from 'lucide-react';
+import { Edit2, MapIcon, Star, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const AllRooms = () => {
@@ -9,7 +9,7 @@ const AllRooms = () => {
 
   const fetchOWnerRooms = useCallback(async () => {
     try {
-      const { data } = await axios.get("/api/room/get-all");
+      const { data } = await axios.get("/api/room/get");
       if (data.success) {
         setRoomData(data.rooms);
       } else {
@@ -26,6 +26,7 @@ const AllRooms = () => {
   }, [fetchOWnerRooms]);
 
   const deleteRoom = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this room?")) return;
     try {
       const { data } = await axios.delete(`/api/room/delete/${id}`);
       if (data.success) {
@@ -130,7 +131,7 @@ const AllRooms = () => {
                     <td className='px-6 py-6 '>
                       <div className='flex items-start space-x-2'>
                         <Star className='w-4 h-4 text-yellow-400 fill-current' />
-                        <span className='text-gray-600 text-sm leading-relaxed'>{room.hotel.rating}</span>
+                        <span className='text-gray-600 text-sm leading-relaxed'>{room.rating}</span>
                       </div>
                     </td>
 
@@ -146,10 +147,21 @@ const AllRooms = () => {
 
                       </div>
                     </td>
-                    <td>
-                      <button onClick={() => deleteRoom(room._id)} className='bg-red-500 text-white py-1 px-4 rounded-full cursor-pointer'>
-                        delete
-                      </button>
+                    <td className='px-6 py-6'>
+                      <div className='flex items-center gap-2'>
+                        <button
+                          onClick={() => navigate(`/owner/edit-room/${room._id}`)}
+                          className='flex items-center gap-1 bg-blue-500 text-white py-1 px-3 rounded-full text-xs hover:bg-blue-600 transition-colors'
+                        >
+                          <Edit2 size={12} /> Edit
+                        </button>
+                        <button
+                          onClick={() => deleteRoom(room._id)}
+                          className='flex items-center gap-1 bg-red-500 text-white py-1 px-3 rounded-full text-xs hover:bg-red-600 transition-colors'
+                        >
+                          <Trash2 size={12} /> Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

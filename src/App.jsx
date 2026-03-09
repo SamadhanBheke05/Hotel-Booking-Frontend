@@ -19,6 +19,7 @@ import RegisterHotel from './pages/owner/RegisterHotel';
 import EditHotel from './pages/owner/EditHotel';
 import AllRooms from './pages/owner/AllRooms';
 import AddRoom from './pages/owner/AddRoom';
+import EditRoom from './pages/owner/EditRoom';
 import Bookings from './pages/owner/Bookings';
 import HotelRooms from './pages/HotelRooms';
 import Revenue from "./pages/owner/Revenue";
@@ -56,6 +57,7 @@ const App = () => {
           <Route path="edit-hotel/:hotelId" element={owner ? <EditHotel /> : <Login />} />
           <Route path="rooms" element={owner ? <AllRooms /> : <Login />} />
           <Route path="add-room" element={owner ? <AddRoom /> : <Login />} />
+          <Route path="edit-room/:roomId" element={owner ? <EditRoom /> : <Login />} />
           <Route path="bookings" element={owner ? <Bookings /> : <Login />} />
           <Route path="group-bookings" element={owner ? <GroupBookings /> : <Login />} />
         </Route>

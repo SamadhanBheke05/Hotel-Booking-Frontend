@@ -9,7 +9,6 @@ const RegisterHotel = () => {
   const [data, setData] = useState({
     hotelName: "",
     hotelAddress: "",
-    location: "",
     rating: "",
     price: "",
     amenities: "",
@@ -35,7 +34,6 @@ const RegisterHotel = () => {
     const formData = new FormData();
     formData.append("hotelName", data.hotelName);
     formData.append("hotelAddress", data.hotelAddress);
-    formData.append("location", data.location);
     formData.append("rating", data.rating);
     formData.append("price", data.price);
     formData.append("amenities", data.amenities);
@@ -88,14 +86,6 @@ const RegisterHotel = () => {
           <textarea name="hotelAddress" value={data.hotelAddress} onChange={handleChange}
             rows={3} placeholder="Type here"
             className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 resize-none" />
-        </div>
-
-        {/* Location */}
-        <div className="flex flex-col gap-1 max-w-md">
-          <label className="text-base font-medium">Google Map Location (Link)</label>
-          <input type="text" name="location" value={data.location} onChange={handleChange}
-            placeholder="Paste Google Maps Link" required
-            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40" />
         </div>
 
         {/* Rating & Price */}

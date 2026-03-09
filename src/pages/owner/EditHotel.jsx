@@ -15,7 +15,6 @@ const EditHotel = () => {
     const [data, setData] = useState({
         hotelName: "",
         hotelAddress: "",
-        location: "",
         rating: "",
         price: "",
         amenities: "",
@@ -35,7 +34,6 @@ const EditHotel = () => {
                         setData({
                             hotelName: hotel.hotelName || "",
                             hotelAddress: hotel.hotelAddress || "",
-                            location: hotel.location || "",
                             rating: hotel.rating || "",
                             price: hotel.price || "",
                             amenities: hotel.amenities || "",
@@ -75,7 +73,6 @@ const EditHotel = () => {
             const formData = new FormData();
             formData.append("hotelName", data.hotelName);
             formData.append("hotelAddress", data.hotelAddress);
-            formData.append("location", data.location);
             formData.append("rating", data.rating);
             formData.append("price", data.price);
             formData.append("amenities", data.amenities);
@@ -138,13 +135,6 @@ const EditHotel = () => {
                     <label className="text-base font-medium">Hotel Address</label>
                     <textarea name="hotelAddress" value={data.hotelAddress} onChange={handleChange}
                         rows={3} className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 resize-none" />
-                </div>
-
-                {/* Location */}
-                <div className="flex flex-col gap-1 max-w-md">
-                    <label className="text-base font-medium">Google Map Location (Link)</label>
-                    <input type="text" name="location" value={data.location} onChange={handleChange}
-                        required className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40" />
                 </div>
 
                 {/* Rating & Price */}

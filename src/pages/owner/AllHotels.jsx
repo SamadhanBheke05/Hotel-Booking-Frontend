@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useState, useEffect } from 'react'
 import { AppContext } from '../../context/AppContext'
-import { MapPin, Star, Users, Edit2, Trash2 } from 'lucide-react';
+import { Star, Users, Edit2, Trash2 } from 'lucide-react';
 import toast from "react-hot-toast"
 
 const AllHotels = () => {
@@ -89,11 +89,7 @@ const AllHotels = () => {
 
                     {/* Location */}
                     <td className='px-6 py-5'>
-                      <a href={hotel.location} target="_blank" rel="noopener noreferrer"
-                        className='flex items-start gap-1 group text-sm text-gray-600 hover:text-blue-600'>
-                        <MapPin className='w-4 h-4 mt-0.5 flex-shrink-0' />
-                        <span className='line-clamp-2'>{hotel.hotelAddress}</span>
-                      </a>
+                      <span className='text-sm text-gray-600 line-clamp-2'>{hotel.hotelAddress}</span>
                     </td>
 
                     {/* Owner */}
