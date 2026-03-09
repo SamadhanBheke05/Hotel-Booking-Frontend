@@ -63,11 +63,36 @@ const RegisterHotel = () => {
     };
 
     try {
-      let { data: res } = await axios.post("/api/hotel/register", buildFormData("image"));
+      const primaryPayload = buildFormData("image");
+      console.log("REGISTER_HOTEL_PAYLOAD", {
+        fileName: file?.name,
+        fileType: file?.type,
+        fileSize: file?.size,
+        fields: Array.from(primaryPayload.keys()),
+      });
+
+      let { data: res } = await axios.post("/api/hotel/register", primaryPayload, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       // Compatibility retry for older backend variants that expect "hotelImage"
       if (!res?.success && res?.message === "All fields are required") {
-        const retry = await axios.post("/api/hotel/register", buildFormData("hotelImage"));
+        const retryPayload = buildFormData("hotelImage");
+        console.log("REGISTER_HOTEL_RETRY_PAYLOAD", {
+          fileName: file?.name,
+          fileType: file?.type,
+          fileSize: file?.size,
+          fields: Array.from(retryPayload.keys()),
+        });
+        const retry = await axios.post("/api/hotel/register", retryPayload, {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
         res = retry.data;
       }
 
@@ -81,7 +106,19 @@ const RegisterHotel = () => {
       // Retry once with alternate field key when backend validation indicates file mismatch.
       if (error.response?.status === 400 && error.response?.data?.message === "All fields are required") {
         try {
-          const retry = await axios.post("/api/hotel/register", buildFormData("hotelImage"));
+          const retryPayload = buildFormData("hotelImage");
+          console.log("REGISTER_HOTEL_CATCH_RETRY_PAYLOAD", {
+            fileName: file?.name,
+            fileType: file?.type,
+            fileSize: file?.size,
+            fields: Array.from(retryPayload.keys()),
+          });
+          const retry = await axios.post("/api/hotel/register", retryPayload, {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          });
           if (retry.data?.success) {
             toast.success(retry.data.message);
             navigate("/owner");
