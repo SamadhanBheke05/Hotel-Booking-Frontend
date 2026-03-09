@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
-import { ToggleLeft, ToggleRight, Users, Building2 } from "lucide-react";
+import { ToggleLeft, ToggleRight, Users } from "lucide-react";
 
 const RegisterHotel = () => {
   const { axios, navigate } = useContext(AppContext);
@@ -18,6 +18,7 @@ const RegisterHotel = () => {
   });
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [saving, setSaving] = useState(false);
 
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
@@ -27,6 +28,39 @@ const RegisterHotel = () => {
     const selectedFile = e.target.files[0];
     setFile(selectedFile);
     if (selectedFile) setPreview(URL.createObjectURL(selectedFile));
+  };
+
+  const fileToDataUrl = (inputFile) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ""));
+      reader.onerror = () => reject(new Error("Failed to read image file"));
+      reader.readAsDataURL(inputFile);
+    });
+
+  const uploadImageAndGetUrl = async (inputFile) => {
+    const cloudName = (import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "").trim();
+    const uploadPreset = (import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || "").trim();
+
+    if (cloudName && uploadPreset) {
+      const cloudinaryData = new FormData();
+      cloudinaryData.append("file", inputFile);
+      cloudinaryData.append("upload_preset", uploadPreset);
+
+      const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: "POST",
+        body: cloudinaryData,
+      });
+      const data = await response.json();
+
+      if (!response.ok || !data?.secure_url) {
+        throw new Error(data?.error?.message || "Cloud upload failed");
+      }
+      return data.secure_url;
+    }
+
+    // Fallback when cloud config is absent: keep request JSON-only using a data URL.
+    return fileToDataUrl(inputFile);
   };
 
   const handleSubmit = async (e) => {
@@ -48,35 +82,22 @@ const RegisterHotel = () => {
     }
     if (!file) return toast.error("Hotel image is required");
 
-    const formData = new FormData();
-    formData.append("hotelName", hotelName);
-    formData.append("hotelAddress", hotelAddress);
-    formData.append("rating", String(rating));
-    formData.append("price", String(price));
-    formData.append("amenities", amenities);
-    formData.append("groupBookingAllowed", data.groupBookingAllowed);
-    formData.append("maxGroupMembers", data.maxGroupMembers || 0);
-    formData.append("maxGroupRooms", data.maxGroupRooms || 0);
-    formData.append("image", file);
-    // Legacy payload aliases for older backend contracts.
-    formData.append("name", hotelName);
-    formData.append("title", hotelName);
-    formData.append("address", hotelAddress);
-    formData.append("location", hotelAddress);
-    formData.append("hotelLocation", hotelAddress);
-    formData.append("pricePerNight", String(price));
-    formData.append("facilities", amenities);
-    formData.append("hotelImage", file?.name || "");
-
     try {
-      console.log("REGISTER_HOTEL_PAYLOAD", {
-        fileName: file?.name,
-        fileType: file?.type,
-        fileSize: file?.size,
-        fields: Array.from(formData.keys()),
-      });
+      setSaving(true);
+      const imageUrl = await uploadImageAndGetUrl(file);
+      const payload = {
+        hotelName,
+        hotelAddress,
+        rating,
+        price,
+        amenities,
+        imageUrl,
+        groupBookingAllowed: data.groupBookingAllowed,
+        maxGroupMembers: data.groupBookingAllowed ? Number(data.maxGroupMembers || 0) : 0,
+        maxGroupRooms: data.groupBookingAllowed ? Number(data.maxGroupRooms || 0) : 0,
+      };
 
-      const { data: res } = await axios.post("/api/hotel/register", formData, {
+      const { data: res } = await axios.post("/api/hotel/register-v2", payload, {
         withCredentials: true,
       });
 
@@ -89,11 +110,9 @@ const RegisterHotel = () => {
     } catch (error) {
       const status = error.response?.status;
       const message = error.response?.data?.message || error.message || "Failed to register hotel";
-      console.error("REGISTER_HOTEL_ERROR", {
-        status,
-        data: error.response?.data,
-      });
       toast.error(status ? `${message} (HTTP ${status})` : message);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -189,9 +208,9 @@ const RegisterHotel = () => {
           )}
         </div>
 
-        <button type="submit"
-          className="px-8 py-2.5 bg-primary text-white font-medium rounded hover:bg-blue-700 transition-colors">
-          Register Hotel
+        <button type="submit" disabled={saving}
+          className="px-8 py-2.5 bg-primary text-white font-medium rounded hover:bg-blue-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+          {saving ? "Registering..." : "Register Hotel"}
         </button>
       </form>
     </div>

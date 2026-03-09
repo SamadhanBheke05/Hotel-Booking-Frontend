@@ -46,6 +46,7 @@ const AppContextProvider = ({ children }) => {
 
   const getImageUrl = (imagePath) => {
     if (!imagePath) return "";
+    if (/^data:image\//i.test(imagePath)) return imagePath;
     if (/^https:\/\//i.test(imagePath)) return imagePath;
 
     if (/^http:\/\//i.test(imagePath)) {
