@@ -29,6 +29,10 @@ axios.defaults.baseURL = backendUrl;
 
 export const AppContext = createContext();
 
+// Fallback image used when a hotel/room image is missing or invalid
+const FALLBACK_IMAGE =
+  "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop&auto=format&q=80";
+
 const AppContextProvider = ({ children }) => {
 
   const navigate = useNavigate();
@@ -45,24 +49,38 @@ const AppContextProvider = ({ children }) => {
   });
 
   const getImageUrl = (imagePath) => {
-    if (!imagePath) return "";
+    // If nothing is provided, immediately return a nice placeholder image
+    if (!imagePath) return FALLBACK_IMAGE;
+
+    // Already-embedded data URL
     if (/^data:image\//i.test(imagePath)) return imagePath;
+
+    // Secure remote URL (Cloudinary, Unsplash, etc.)
     if (/^https:\/\//i.test(imagePath)) return imagePath;
 
+    // Upgrade insecure HTTP image URLs when possible
     if (/^http:\/\//i.test(imagePath)) {
       try {
         const parsed = new URL(imagePath);
+
+        // Old localhost-style URLs – we no longer serve from /images,
+        // so fall back to placeholder instead of a broken link.
         if (/localhost|127\.0\.0\.1/i.test(parsed.hostname)) {
-          const filename = parsed.pathname.split("/").pop();
-          return `${backendUrl}/images/${filename}`;
+          return FALLBACK_IMAGE;
         }
+
+        // For other hosts, just upgrade to HTTPS
         return imagePath.replace(/^http:\/\//i, "https://");
       } catch {
-        return `${backendUrl}/images/${imagePath}`;
+        // On any parsing error, use fallback
+        return FALLBACK_IMAGE;
       }
     }
 
-    return `${backendUrl}/images/${imagePath}`;
+    // For legacy filename-only values (e.g. "hotel1.jpg") we no longer
+    // have a local /images folder on the backend, so show the fallback
+    // instead of requesting a non-existent resource.
+    return FALLBACK_IMAGE;
   };
 
   const checkUserLoggedInOrNot = async () => {
