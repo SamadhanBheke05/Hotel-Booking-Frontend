@@ -52,35 +52,48 @@ const AppContextProvider = ({ children }) => {
     // If nothing is provided, immediately return a nice placeholder image
     if (!imagePath) return FALLBACK_IMAGE;
 
+    const normalized = String(imagePath).trim().replace(/^['"]|['"]$/g, "");
+
     // Already-embedded data URL
-    if (/^data:image\//i.test(imagePath)) return imagePath;
+    if (/^data:image\//i.test(normalized)) return normalized;
 
     // Secure remote URL (Cloudinary, Unsplash, etc.)
-    if (/^https:\/\//i.test(imagePath)) return imagePath;
+    if (/^https:\/\//i.test(normalized)) return normalized;
+
+    // Protocol-relative URL (e.g. //res.cloudinary.com/...)
+    if (/^\/\//.test(normalized)) return `https:${normalized}`;
+
+    // Host-only URL (e.g. res.cloudinary.com/... or images.unsplash.com/...)
+    if (/^(res\.cloudinary\.com|images\.unsplash\.com)\//i.test(normalized)) {
+      return `https://${normalized}`;
+    }
 
     // Upgrade insecure HTTP image URLs when possible
-    if (/^http:\/\//i.test(imagePath)) {
+    if (/^http:\/\//i.test(normalized)) {
       try {
-        const parsed = new URL(imagePath);
+        const parsed = new URL(normalized);
 
-        // Old localhost-style URLs – we no longer serve from /images,
-        // so fall back to placeholder instead of a broken link.
+        // Old localhost-style URLs – rewrite to our current backend /uploads path
         if (/localhost|127\.0\.0\.1/i.test(parsed.hostname)) {
-          return FALLBACK_IMAGE;
+          const filename = parsed.pathname.split("/").pop();
+          return filename ? `${backendUrl}/uploads/${filename}` : FALLBACK_IMAGE;
         }
 
         // For other hosts, just upgrade to HTTPS
-        return imagePath.replace(/^http:\/\//i, "https://");
+        return normalized.replace(/^http:\/\//i, "https://");
       } catch {
         // On any parsing error, use fallback
         return FALLBACK_IMAGE;
       }
     }
 
-    // For legacy filename-only values (e.g. "hotel1.jpg") we no longer
-    // have a local /images folder on the backend, so show the fallback
-    // instead of requesting a non-existent resource.
-    return FALLBACK_IMAGE;
+    // Legacy filename-only values (e.g. "hotel1.jpg") stored in DB:
+    // serve them from backend /uploads for old data.
+    const sanitized = normalized.replace(/^\/+/, "");
+    if (sanitized.startsWith("uploads/")) {
+      return `${backendUrl}/${sanitized}`;
+    }
+    return `${backendUrl}/uploads/${sanitized}`;
   };
 
   const checkUserLoggedInOrNot = async () => {

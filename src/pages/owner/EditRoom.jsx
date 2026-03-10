@@ -24,6 +24,11 @@ const EditRoom = () => {
     isAvailable: true,
   });
 
+  const handleImgError = (e) => {
+    e.currentTarget.onerror = null;
+    e.currentTarget.src = getImageUrl("");
+  };
+
   const newImagePreviews = useMemo(
     () => newImages.map((file) => URL.createObjectURL(file)),
     [newImages]
@@ -147,6 +152,7 @@ const EditRoom = () => {
                   src={getImageUrl(img)}
                   alt={`room-${index}`}
                   className="w-20 h-16 rounded-lg object-cover shadow-sm"
+                  onError={handleImgError}
                 />
               ))
             ) : (

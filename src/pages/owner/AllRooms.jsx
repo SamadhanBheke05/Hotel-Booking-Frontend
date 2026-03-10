@@ -7,6 +7,12 @@ const AllRooms = () => {
   const { navigate, axios, getImageUrl } = useContext(AppContext);
   const [roomData, setRoomData] = useState([]);
 
+  const handleImgError = (e) => {
+    // avoid infinite loop if fallback also fails
+    e.currentTarget.onerror = null;
+    e.currentTarget.src = getImageUrl("");
+  };
+
   const fetchAllRooms = useCallback(async () => {
     try {
       const { data } = await axios.get("/api/room/get-all", {
@@ -102,6 +108,7 @@ const AllRooms = () => {
                             src={getImageUrl(room.images[0])}
                             alt={room.roomType}
                             className='w-20 h-16 rounded-lg object-cover shadow-sm transition-transform duration-300 group-hover:scale-105'
+                            onError={handleImgError}
                           />
                           <div className='absolute inset-0 rounded-lg shadow-inner bg-black/5 pointer-events-none'></div>
                         </div>
